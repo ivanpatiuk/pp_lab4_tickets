@@ -3,6 +3,7 @@ package lpnu.service.impl;
 import lpnu.dto.TicketDTO;
 import lpnu.dto.UserDTO;
 import lpnu.entity.User;
+import lpnu.exception.ServiceException;
 import lpnu.mapper.UserToUserDTOMapper;
 import lpnu.repository.UserRepository;
 import lpnu.service.UserService;
@@ -41,8 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUser(final UserDTO userDTO) {
+        //userRepository.getUserById(userDTO.getId());
         if (userRepository.getAllUsers().stream().noneMatch(e -> e.getId().equals(userDTO.getId())))
-            return null;
+           throw new ServiceException(400, "user with id '"+userDTO.getId()+"'not found");
         else
             return userMapper.toDTO(
                     userRepository.updateCity(

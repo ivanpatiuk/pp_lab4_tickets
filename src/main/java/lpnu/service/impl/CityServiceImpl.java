@@ -2,6 +2,7 @@ package lpnu.service.impl;
 
 import lpnu.dto.CityDTO;
 import lpnu.entity.City;
+import lpnu.exception.ServiceException;
 import lpnu.mapper.CityToCityDTOMapper;
 import lpnu.repository.CityRepository;
 import lpnu.service.CityService;
@@ -13,19 +14,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CityServiceImpl implements CityService {
-//    public boolean validate(CityDTO cityDTO){
-//            if (cityDTO.getCountry() == null || cityDTO.getName() == null || cityDTO.getLatitude() < -90 ||
-//                    cityDTO.getLatitude() > 90 || cityDTO.getLongitude() < -90 || cityDTO.getLongitude() > 90)
-//                return false;
-//            String nameRegex = "([A-Z][a-z]+[\s-]?)*[A-Z][a-z]+"; // (велика буква{1}малі букви{>1}- або пробіл{1}){>=0}
-//                                                                  // (велика буква{1}малі букви{>1}){>=1}
-//            if (!cityDTO.getCountry().matches(nameRegex) ||
-//                    !cityDTO.getName().matches(nameRegex))
-//                return false;
-//            else
-//                return true;
-//
-//    }
     @Autowired
     private CityToCityDTOMapper cityMapper;
 
@@ -41,26 +29,26 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public CityDTO getCityById(final Long id) {
-        if(cityRepository.getAllCities().stream().anyMatch(e->e.getId().equals(id)))
-            return cityMapper.toDTO(cityRepository.getCityById(id));
-        else
-            return null;
+        return cityMapper.toDTO(cityRepository.getCityById(id));
     }
+
     @Override
-    public CityDTO saveCity(CityDTO cityDTO) {
+    public CityDTO saveCity(final CityDTO cityDTO) {
         if (cityRepository.getAllCities().stream()
-                .anyMatch(e -> cityMapper.toDTO(e).equals(cityDTO) || e.getId().equals(cityDTO.getId())))
-            return null;
+                .anyMatch(e -> cityMapper.toDTO(e).equals(cityDTO)))
+            throw new ServiceException(400, "the city is already saved");
         else {
             final City city = cityMapper.toEntity(cityDTO);
             cityRepository.saveCity(city);
             return cityMapper.toDTO(city);
         }
     }
+
     @Override
-    public CityDTO updateCity(CityDTO cityDTO) {
-        if(cityRepository.getAllCities().stream().noneMatch(e->e.getId().equals(cityDTO.getId())))
-            return null;
+    public CityDTO updateCity(final CityDTO cityDTO) {
+//        cityRepository.getCityById(cityDTO.getId());
+        if (cityRepository.getAllCities().stream().noneMatch(e -> e.getId().equals(cityDTO.getId())))
+            throw new ServiceException(400, "city with id '"+cityDTO.getId()+"' not found");
         else
             return cityMapper.toDTO(
                     cityRepository.updateCity(
@@ -73,7 +61,6 @@ public class CityServiceImpl implements CityService {
         if (cityRepository.getAllCities().stream().anyMatch(e -> e.getId().equals(id)))
             cityRepository.deleteCityById(id);
     }
-
 
 
 }

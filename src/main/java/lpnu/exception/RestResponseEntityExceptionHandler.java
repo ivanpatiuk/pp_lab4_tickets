@@ -8,7 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler {
-    @ExceptionHandler(value = ServiceExceptionDTO.class)
+    @ExceptionHandler(value = ServiceException.class)
     public ResponseEntity<Object> handleServiceException(final ServiceException ex, final WebRequest request) {
         return ResponseEntity.status(HttpStatus.valueOf(ex.getCode())).body(new ServiceExceptionDTO(ex));
     }

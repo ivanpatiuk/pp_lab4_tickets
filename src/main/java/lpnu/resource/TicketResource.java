@@ -42,6 +42,10 @@ public class TicketResource {
         ticketService.deleteTicketById(id);
         return ResponseEntity.ok().build();
     }
+    @DeleteMapping("/tickets-user/{id}")
+    public void removeTicketFromUserByTicketId(@PathVariable final Long id){
+        ticketService.removeTicketFromUserByTicketId(id);
+    }
     @GetMapping("/ticket-price")
     public SimpleTicketDTO getTicketPrice(@RequestBody final DepartureArrivalDTO departureArrivalDTO){
         return ticketService.getTicketPrice(departureArrivalDTO);
@@ -51,10 +55,5 @@ public class TicketResource {
     public TicketDTO addTicketToUserById(@PathVariable final Long ticketId, @PathVariable final Long userId) {
         ticketService.addTicketToUserById(ticketId, userId);
         return ticketService.getTicketById(ticketId);
-    }
-
-    @PostMapping("/tickets-test")
-    public TicketDTO saveTicketTest(@RequestBody final DepartureArrivalDTO departureArrivalDTO) throws ParseException {
-        return ticketService.saveTicketTest(departureArrivalDTO);
     }
 }

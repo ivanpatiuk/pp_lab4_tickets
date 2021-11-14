@@ -18,7 +18,4 @@ public interface TicketService {
 
     void deleteTicketById(final Long id);
     void removeTicketFromUserByTicketId(final Long id);
-
-    TicketDTO saveTicketTest(final DepartureArrivalDTO departureArrivalDTO) throws ParseException;
-
 }

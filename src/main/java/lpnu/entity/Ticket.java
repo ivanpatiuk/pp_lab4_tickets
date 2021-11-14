@@ -3,17 +3,32 @@ package lpnu.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.constraints.Future;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Ticket {
     private Long id;
 
+    @NotBlank(message="Departure country name is mandatory")
+    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid departure country name")
     private String departureCountry;
+
+    @NotBlank(message="Departure city name is mandatory")
+    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid departure city name")
     private String departureCity;
 
+    @NotBlank(message="Arrival country name is mandatory")
+    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid arrival country name")
     private String arrivalCountry;
+
+    @NotBlank(message="Arrival city name is mandatory")
+    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid arrival city name")
     private String arrivalCity;
 
+    @Min(200)
     private double distance;
     private double flightTime;
     private double price;
@@ -135,5 +150,34 @@ public class Ticket {
 
     public void setDepartureTime(final LocalDateTime departureTime) {
         this.departureTime = departureTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return Double.compare(ticket.distance, distance) == 0 &&
+                Double.compare(ticket.flightTime, flightTime) == 0 &&
+                Double.compare(ticket.price, price) == 0 &&
+                Objects.equals(departureCountry, ticket.departureCountry) &&
+                Objects.equals(departureCity, ticket.departureCity) &&
+                Objects.equals(arrivalCountry, ticket.arrivalCountry) &&
+                Objects.equals(arrivalCity, ticket.arrivalCity) &&
+                Objects.equals(departureTime, ticket.departureTime) &&
+                Objects.equals(arrivalTime, ticket.arrivalTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(departureCountry,
+                departureCity,
+                arrivalCountry,
+                arrivalCity,
+                distance,
+                flightTime,
+                price,
+                departureTime,
+                arrivalTime);
     }
 }

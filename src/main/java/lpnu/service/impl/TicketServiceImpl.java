@@ -3,6 +3,7 @@ package lpnu.service.impl;
 import lpnu.dto.*;
 import lpnu.entity.Ticket;
 import lpnu.entity.User;
+import lpnu.exception.ServiceException;
 import lpnu.mapper.CityToCityDTOMapper;
 import lpnu.mapper.TicketToTicketDTOMapper;
 import lpnu.mapper.UserToUserDTOMapper;
@@ -13,6 +14,8 @@ import lpnu.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,10 +55,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDTO getTicketById(final Long id) {
-        if (ticketRepository.getAllTickets().stream().anyMatch(e -> e.getId().equals(id)))
-            return ticketMapper.toDTO(ticketRepository.getTicketById(id));
-        else
-            return null;
+        return ticketMapper.toDTO(ticketRepository.getTicketById(id));
     }
 
     @Override
@@ -65,8 +65,8 @@ public class TicketServiceImpl implements TicketService {
         final CityDTO arrivalCity = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getArrivalCityId()));
 
         final double cityDistance = cityDistance(departureCity, arrivalCity);
-        if (cityDistance < 0)
-            return null;
+        if (cityDistance <= 200)
+            throw new ServiceException(400, "distance between cities is less than 200");
 
         ticket.setDepartureCountry(departureCity.getCountry());
         ticket.setDepartureCity(departureCity.getName());
@@ -80,6 +80,9 @@ public class TicketServiceImpl implements TicketService {
                 .getDepartureTime()
                 .plusMinutes((int) (flightTime(departureCity, arrivalCity)) + 20));
 
+        if (ticketRepository.getAllTickets().stream().map(e -> e.equals(ticket)).findAny().isPresent())
+            throw new ServiceException(400, "ticket is already saved");
+
         ticketRepository.saveTicket(ticket);
 
         return ticketMapper.toDTO(ticket);
@@ -87,8 +90,9 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDTO updateTicket(final TicketDTO ticketDTO) {
+        //ticketRepository.getTicketById(ticketDTO.getId());
         if (ticketRepository.getAllTickets().stream().noneMatch(e -> e.getId().equals(ticketDTO.getId())))
-            return null;
+            throw new ServiceException(400, "ticket with id '" + ticketDTO.getId() + "'not found");
         else
             return ticketMapper.toDTO(
                     ticketRepository.updateTicket(
@@ -100,7 +104,7 @@ public class TicketServiceImpl implements TicketService {
     public TicketDTO addTicketToUserById(final Long ticketId, final Long userId) {
         if (ticketRepository.getTicketById(ticketId) == null || userRepository.getUserById(userId) == null ||
                 ticketId < 1 || userId < 1)
-            return null;
+            throw new ServiceException(400, "wrong arguments");
         final Ticket ticket = ticketRepository.getTicketById(ticketId);
         final User user = userRepository.getUserById(userId);
         user.getTicketDTOList().add(ticketMapper.toDTO(ticket));
@@ -109,30 +113,30 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public void deleteTicketById(final Long id) {
-        if (ticketRepository.getAllTickets().stream().anyMatch(e -> e.getId().equals(id)))
-            ticketRepository.deleteTicketById(id);
+        removeTicketFromUserByTicketId(id);
+        ticketRepository.deleteTicketById(id);
     }
 
     @Override
     public void removeTicketFromUserByTicketId(final Long id) {
-        if (ticketRepository.getTicketById(id) == null || id < 1)
-            return;
-        userRepository.getAllUsers().stream()
-                .map(e -> e.getTicketDTOList().removeIf(ticketDTO -> ticketDTO.getId() == id)).count();
+        ticketRepository.getTicketById(id);
+        long x = userRepository.getAllUsers().stream()
+                .map(e -> e.getTicketDTOList().removeIf(ticketDTO -> ticketDTO.getId().equals(id))).count();
     }
 
     @Override
     public SimpleTicketDTO getTicketPrice(final DepartureArrivalDTO departureArrivalDTO) {
-        if (departureArrivalDTO.getDepartureCityId() < 1 || departureArrivalDTO.getArrivalCityId() < 1)
-            return null;
+        if (departureArrivalDTO.getDepartureCityId() < 1 || departureArrivalDTO.getArrivalCityId() < 1
+                && departureArrivalDTO.getArrivalCityId().equals(departureArrivalDTO.getDepartureCityId()))
+            throw new ServiceException(400, "wrong arguments");
         final CityDTO cityDTO1 = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getDepartureCityId()));
         final CityDTO cityDTO2 = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getArrivalCityId()));
 
         final double cityDistance = cityDistance(cityDTO1, cityDTO2);
         final double flightTime = flightTime(cityDTO1, cityDTO2);
 
-        final LocalDateTime departureLocalDateTime = null;
-        final LocalDateTime arrivalLocalDateTime = departureLocalDateTime.plusSeconds((long) (flightTime * 3600));
+        final LocalDateTime departureLocalDateTime = departureArrivalDTO.getDepartureTime();
+        final LocalDateTime arrivalLocalDateTime = departureLocalDateTime.plusMinutes((int) (flightTime) + 20);
 
         final SimpleTicketDTO simpleTicketDTO = new SimpleTicketDTO(
                 cityDTO1.getCountry(),
@@ -145,29 +149,6 @@ public class TicketServiceImpl implements TicketService {
                 departureLocalDateTime,
                 arrivalLocalDateTime);
         return simpleTicketDTO;
-    }
-
-    @Override
-    public TicketDTO saveTicketTest(final DepartureArrivalDTO departureArrivalDTO) throws ParseException {
-        final Ticket ticket = new Ticket();
-        final CityDTO departureCity = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getDepartureCityId()));
-        final CityDTO arrivalCity = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getArrivalCityId()));
-
-        ticket.setDepartureCountry(departureCity.getCountry());
-        ticket.setDepartureCity(departureCity.getName());
-        ticket.setArrivalCountry(arrivalCity.getCountry());
-        ticket.setArrivalCity(arrivalCity.getName());
-        ticket.setDistance(cityDistance(departureCity, arrivalCity));
-        ticket.setFlightTime(flightTime(departureCity, arrivalCity));
-        ticket.setPrice(flightPrice(departureCity, arrivalCity));
-        ticket.setArrivalTime(departureArrivalDTO.getDepartureTime());
-        ticket.setDepartureTime(departureArrivalDTO
-                .getDepartureTime()
-                .plusMinutes((int) (flightTime(departureCity, arrivalCity)) + 20));
-
-        ticketRepository.saveTicket(ticket);
-
-        return ticketMapper.toDTO(ticket);
     }
 
     public double flightTime(final CityDTO cityDTO1, final CityDTO cityDTO2) {
