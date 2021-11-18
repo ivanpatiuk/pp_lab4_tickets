@@ -10,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 public class RestResponseEntityExceptionHandler {
     @ExceptionHandler(value = ServiceException.class)
     public ResponseEntity<Object> handleServiceException(final ServiceException ex, final WebRequest request) {
-        return ResponseEntity.status(HttpStatus.valueOf(ex.getCode())).body(new ServiceExceptionDTO(ex));
+        return ResponseEntity.status(HttpStatus.valueOf(ex.getCode())).body(new ServiceExceptionDTO(ex.getCode(),
+                ex.getMessage(), ex.getDetails()));
     }
 }
