@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 
+@RequestMapping("/api/v1")
 @RestController
 public class UserResource {
     @Autowired
@@ -35,7 +36,7 @@ public class UserResource {
     }
 
     @PutMapping("/users")
-    public UserDTO updateUser(@RequestBody final UserDTO userDTO) {
+    public UserDTO updateUser(@Validated @RequestBody final UserDTO userDTO) {
         return userService.updateUser(userDTO);
     }
 

@@ -1,7 +1,14 @@
 package lpnu.repository;
 
+import lpnu.authorization.Authorization;
+import lpnu.dto.TicketDTO;
 import lpnu.entity.Ticket;
+import lpnu.entity.User;
 import lpnu.exception.ServiceException;
+import lpnu.mapper.CityToCityDTOMapper;
+import lpnu.mapper.TicketToTicketDTOMapper;
+import lpnu.mapper.UserToUserDTOMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -11,9 +18,19 @@ import java.util.List;
 
 @Repository
 public class TicketRepository {
+    private boolean requirePassword = true;
 
     private List<Ticket> tickets;
     private long id = 1;
+
+    @Autowired
+    private UserToUserDTOMapper userMapper;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TicketToTicketDTOMapper ticketMapper;
 
     @PostConstruct
     public void init() {
@@ -43,11 +60,17 @@ public class TicketRepository {
         savedTicket.setDistance(ticket.getDistance());
         savedTicket.setFlightTime(ticket.getFlightTime());
         savedTicket.setPrice(ticket.getPrice());
+        savedTicket.setDepartureTime(ticket.getDepartureTime());
+        savedTicket.setArrivalTime(ticket.getArrivalTime());
 
         return savedTicket;
     }
 
     public Ticket saveTicket(final Ticket ticket) {
+        if (requirePassword){
+            if(!Authorization.isAutorized())
+                throw new ServiceException(400, "not authorized", "only administrator can use this method");
+        }
         ticket.setId(id);
         ++id;
         tickets.add(ticket);
@@ -58,8 +81,15 @@ public class TicketRepository {
         return tickets.stream()
                 .filter(e -> e.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new ServiceException(400, "ticket with id '"+id+"' not found"));
+                .orElseThrow(() -> new ServiceException(400, "ticket with id '" + id + "' not found"));
     }
 
+    public void removeTicketFromUserByTicketId(final Long id) {
+        TicketDTO ticketDTO = ticketMapper.toDTO(getTicketById(id));
+        for (User user : userRepository.getAllUsers()) {
+            if (user.getTicketDTOList().contains(ticketDTO))
+                user.getTicketDTOList().remove(ticketDTO);
+        }
+    }
 }
 

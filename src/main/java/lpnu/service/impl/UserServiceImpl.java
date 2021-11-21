@@ -36,20 +36,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(final Long id) {
-        if (userRepository.getAllUsers().stream().anyMatch(e -> e.getId().equals(id)))
-            userRepository.deleteUserById(id);
+        userRepository.getUserById(id);
+        userRepository.deleteUserById(id);
     }
 
     @Override
     public UserDTO updateUser(final UserDTO userDTO) {
-        //userRepository.getUserById(userDTO.getId());
-        if (userRepository.getAllUsers().stream().noneMatch(e -> e.getId().equals(userDTO.getId())))
-           throw new ServiceException(400, "user with id '"+userDTO.getId()+"'not found");
-        else
-            return userMapper.toDTO(
-                    userRepository.updateCity(
-                            userMapper.toEntity(
-                                    userDTO)));
+        userRepository.getUserById(userDTO.getId());
+        return userMapper.toDTO(
+                userRepository.updateCity(
+                        userMapper.toEntity(
+                                userDTO)));
     }
 
     @Override

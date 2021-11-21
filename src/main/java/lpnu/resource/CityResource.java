@@ -8,8 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
+@RequestMapping("/api/v1")
 @RestController
 public class CityResource {
     @Autowired
@@ -31,7 +33,7 @@ public class CityResource {
     }
 
     @PutMapping("/cities")
-    public CityDTO updateCity(@RequestBody final CityDTO cityDTO) {
+    public CityDTO updateCity(@Validated @RequestBody final CityDTO cityDTO) {
         return cityService.updateCity(cityDTO);
     }
 

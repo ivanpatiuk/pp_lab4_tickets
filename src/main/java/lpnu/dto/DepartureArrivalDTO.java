@@ -2,6 +2,7 @@ package lpnu.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
@@ -13,6 +14,7 @@ public class DepartureArrivalDTO {
     @Min(1)
     private Long arrivalCityId;
 
+    @Future
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime departureTime;
 

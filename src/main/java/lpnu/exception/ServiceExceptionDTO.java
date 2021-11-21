@@ -1,6 +1,6 @@
 package lpnu.exception;
 
-public class ServiceExceptionDTO extends RuntimeException{
+public class ServiceExceptionDTO{
     private int code;
     private String message;
     private String details;
@@ -22,12 +22,6 @@ public class ServiceExceptionDTO extends RuntimeException{
         this.message = message;
         this.details = details;
     }
-    public ServiceExceptionDTO(final String message, final Throwable cause, final int code, final String details) {
-        super(message, cause);
-        this.code = code;
-        this.message = message;
-        this.details = details;
-    }
 
     public int getCode() {
         return code;
@@ -37,7 +31,6 @@ public class ServiceExceptionDTO extends RuntimeException{
         this.code = code;
     }
 
-    @Override
     public String getMessage() {
         return message;
     }

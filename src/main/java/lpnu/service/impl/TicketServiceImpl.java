@@ -90,14 +90,11 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDTO updateTicket(final TicketDTO ticketDTO) {
-        //ticketRepository.getTicketById(ticketDTO.getId());
-        if (ticketRepository.getAllTickets().stream().noneMatch(e -> e.getId().equals(ticketDTO.getId())))
-            throw new ServiceException(400, "ticket with id '" + ticketDTO.getId() + "'not found");
-        else
-            return ticketMapper.toDTO(
-                    ticketRepository.updateTicket(
-                            ticketMapper.toEntity(
-                                    ticketDTO)));
+        ticketRepository.getTicketById(ticketDTO.getId());
+        return ticketMapper.toDTO(
+                ticketRepository.updateTicket(
+                        ticketMapper.toEntity(
+                                ticketDTO)));
     }
 
     @Override
@@ -120,14 +117,13 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void removeTicketFromUserByTicketId(final Long id) {
         ticketRepository.getTicketById(id);
-        long x = userRepository.getAllUsers().stream()
-                .map(e -> e.getTicketDTOList().removeIf(ticketDTO -> ticketDTO.getId().equals(id))).count();
+        ticketRepository.removeTicketFromUserByTicketId(id);
     }
 
     @Override
     public SimpleTicketDTO getTicketPrice(final DepartureArrivalDTO departureArrivalDTO) {
         if (departureArrivalDTO.getDepartureCityId() < 1 || departureArrivalDTO.getArrivalCityId() < 1
-                && departureArrivalDTO.getArrivalCityId().equals(departureArrivalDTO.getDepartureCityId()))
+                || departureArrivalDTO.getArrivalCityId().equals(departureArrivalDTO.getDepartureCityId()))
             throw new ServiceException(400, "wrong arguments");
         final CityDTO cityDTO1 = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getDepartureCityId()));
         final CityDTO cityDTO2 = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getArrivalCityId()));

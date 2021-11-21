@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/v1")
 public class TicketResource {
     @Autowired
     public TicketService ticketService;
@@ -27,13 +28,18 @@ public class TicketResource {
         return ticketService.getTicketById(id);
     }
 
+    @GetMapping("/ticket-price/{departureCityId}/{arrivalCityId}")
+    public SimpleTicketDTO getTicketPrice(@Validated @PathVariable final DepartureArrivalDTO departureArrivalDTO){
+        return ticketService.getTicketPrice(departureArrivalDTO);
+    }
+
     @PostMapping("/tickets")
     public TicketDTO saveTicket(@Validated @RequestBody final DepartureArrivalDTO departureArrivalDTO) {
         return ticketService.saveTicket(departureArrivalDTO);
     }
 
     @PutMapping("/tickets")
-    public TicketDTO updateTicket(@RequestBody final TicketDTO ticketDTO) {
+    public TicketDTO updateTicket(@Validated @RequestBody final TicketDTO ticketDTO) {
         return ticketService.updateTicket(ticketDTO);
     }
 
@@ -42,13 +48,10 @@ public class TicketResource {
         ticketService.deleteTicketById(id);
         return ResponseEntity.ok().build();
     }
+
     @DeleteMapping("/tickets-user/{id}")
     public void removeTicketFromUserByTicketId(@PathVariable final Long id){
         ticketService.removeTicketFromUserByTicketId(id);
-    }
-    @GetMapping("/ticket-price")
-    public SimpleTicketDTO getTicketPrice(@RequestBody final DepartureArrivalDTO departureArrivalDTO){
-        return ticketService.getTicketPrice(departureArrivalDTO);
     }
 
     @PutMapping("/tickets/{ticketId}/{userId}")
