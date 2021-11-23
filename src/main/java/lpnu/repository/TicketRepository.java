@@ -1,6 +1,5 @@
 package lpnu.repository;
 
-import lpnu.authorization.Authorization;
 import lpnu.dto.TicketDTO;
 import lpnu.entity.Ticket;
 import lpnu.entity.User;
@@ -18,7 +17,6 @@ import java.util.List;
 
 @Repository
 public class TicketRepository {
-    private boolean requirePassword = true;
 
     private List<Ticket> tickets;
     private long id = 1;
@@ -67,10 +65,6 @@ public class TicketRepository {
     }
 
     public Ticket saveTicket(final Ticket ticket) {
-        if (requirePassword){
-            if(!Authorization.isAutorized())
-                throw new ServiceException(400, "not authorized", "only administrator can use this method");
-        }
         ticket.setId(id);
         ++id;
         tickets.add(ticket);
