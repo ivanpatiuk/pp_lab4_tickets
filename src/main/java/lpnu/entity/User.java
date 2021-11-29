@@ -1,5 +1,6 @@
 package lpnu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lpnu.dto.TicketDTO;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ public class User {
     @Max(200)
     private Integer age;
 
+    @JsonIgnore
     private List<TicketDTO> ticketDTOList;// = new ArrayList<>();
 
     @PostConstruct

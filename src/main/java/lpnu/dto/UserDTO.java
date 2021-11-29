@@ -1,5 +1,7 @@
 package lpnu.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ public class UserDTO {
     @Max(200)
     private Integer age;
 
+    @JsonIgnore
     private List<TicketDTO> ticketDTOList;// = new ArrayList<>();
 
     @PostConstruct
