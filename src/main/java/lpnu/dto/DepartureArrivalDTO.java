@@ -26,7 +26,7 @@ public class DepartureArrivalDTO {
         this.arrivalCityId = arrivalCityId;
     }
 
-    public DepartureArrivalDTO(Long departureCityId, Long arrivalCityId, LocalDateTime departureTime) {
+    public DepartureArrivalDTO(final Long departureCityId, final Long arrivalCityId, final LocalDateTime departureTime) {
         this.departureCityId = departureCityId;
         this.arrivalCityId = arrivalCityId;
         this.departureTime = departureTime;
@@ -50,7 +50,7 @@ public class DepartureArrivalDTO {
         return departureTime;
     }
 
-    public void setDepartureTime(LocalDateTime departureTime) {
+    public void setDepartureTime(final LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 }

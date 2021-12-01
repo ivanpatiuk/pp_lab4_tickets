@@ -24,7 +24,6 @@ public class UserDTO {
     @Max(200)
     private Integer age;
 
-    @JsonIgnore
     private List<TicketDTO> ticketDTOList;// = new ArrayList<>();
 
     @PostConstruct

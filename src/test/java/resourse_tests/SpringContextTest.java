@@ -1,4 +1,4 @@
-package service_tests;
+package resourse_tests;
 
 import lpnu.Application;
 import org.junit.Test;

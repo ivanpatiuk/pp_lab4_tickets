@@ -57,5 +57,4 @@ public class CityServiceImpl implements CityService {
         cityRepository.deleteCityById(id);
     }
 
-
 }
