@@ -36,11 +36,11 @@ public class TicketRepository {
     }
 
     public List<Ticket> getAllTickets() {
-        return new ArrayList<Ticket>(tickets);
+        return new ArrayList<>(tickets);
     }
 
     public void deleteTicketById(final Long id) {
-        for (Ticket ticket : tickets) {
+        for (final Ticket ticket : tickets) {
             if (ticket.getId().equals(id)) {
                 tickets.remove(ticket);
                 break;

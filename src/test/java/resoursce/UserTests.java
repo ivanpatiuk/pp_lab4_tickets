@@ -1,7 +1,6 @@
-package resourse_tests;
+package resoursce;
 
 import lpnu.Application;
-import lpnu.dto.TicketDTO;
 import lpnu.dto.UserDTO;
 import lpnu.entity.User;
 import lpnu.repository.UserRepository;
@@ -14,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -58,7 +55,7 @@ public class UserTests {
     public void getUserById_thenStatus200() throws Exception {
         final User user = new User(null, "Hello", "Test", 5, null);
         userRepository.saveUser(user);
-        mvc.perform(get("/api/v1/users/1").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/v1/users/"+user.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)));

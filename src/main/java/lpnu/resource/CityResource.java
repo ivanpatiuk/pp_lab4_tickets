@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class CityResource {
     @Autowired
-    public CityService cityService;
+    private CityService cityService;
 
     @GetMapping("/cities")
     public List<CityDTO> getAllCities() {

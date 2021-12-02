@@ -20,10 +20,10 @@ public class CityRepository {
     }
 
     public List<City> getAllCities() {
-        return new ArrayList<City>(cities);
+        return new ArrayList<>(cities);
     }
     public void deleteCityById(final Long id) {
-        for(City city : cities){
+        for(final City city : cities){
             if (city.getId().equals(id)) {
                 cities.remove(city);
                 break;

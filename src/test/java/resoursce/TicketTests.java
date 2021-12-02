@@ -1,16 +1,14 @@
-package resourse_tests;
+package resoursce;
 
 import lpnu.Application;
 import lpnu.dto.DepartureArrivalDTO;
 import lpnu.dto.TicketDTO;
 import lpnu.entity.City;
-import lpnu.entity.Ticket;
 import lpnu.entity.User;
 import lpnu.repository.CityRepository;
 import lpnu.repository.TicketRepository;
 import lpnu.repository.UserRepository;
 import lpnu.service.TicketService;
-import lpnu.service.impl.TicketServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -56,9 +52,9 @@ public class TicketTests {
         cityRepository.saveCity(city);
         cityRepository.saveCity(city2);
 
-        LocalDateTime localDateTime = LocalDateTime.of(2022, Month.JANUARY,20,13,30);
+        final LocalDateTime localDateTime = LocalDateTime.of(2022, Month.JANUARY,20,13,30);
 
-        DepartureArrivalDTO departureArrivalDTO = new DepartureArrivalDTO(1L,2L,localDateTime);
+        final DepartureArrivalDTO departureArrivalDTO = new DepartureArrivalDTO(1L,2L,localDateTime);
         return ticketService.saveTicket(departureArrivalDTO);
     }
 
@@ -93,9 +89,9 @@ public class TicketTests {
 
     @Test
     public void getTicketById_thenStatus200() throws Exception {
-        createTicketForTests();
+        Long ticketId = createTicketForTests().getId();
 
-        mvc.perform(get("/api/v1/tickets/1").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/v1/tickets/"+ticketId.intValue()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.departureCity", is("Lviv")));
@@ -103,7 +99,7 @@ public class TicketTests {
 
     @Test
     public void getTicketById_thenStatus400() throws Exception {
-        createTicketForTests();
+        Long ticketId = createTicketForTests().getId();
 
         mvc.perform(get("/api/v1/tickets/2").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -111,11 +107,11 @@ public class TicketTests {
 
     @Test
     public void updateTicket_thenStatus200() throws Exception {
-        createTicketForTests();
+        Long ticketId = createTicketForTests().getId();
 
         mvc.perform(put("/api/v1/tickets").contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
-                                "   \"id\": 1," +
+                                "   \"id\": "+ticketId.intValue()+"," +
                                 "    \"departureCountry\": \"Ukraine\"," +
                                 "    \"departureCity\": \"New-Lviv\"," +
                                 "    \"arrivalCountry\": \"Ukraine\"," +
@@ -141,25 +137,26 @@ public class TicketTests {
     }
     @Test
     public void removeTicketFromUserByTicketId_thenStatus200() throws Exception {
-        final User user = new User(null, "Hello", "Test", 5, new ArrayList<TicketDTO>());
-        user.getTicketDTOList().add(createTicketForTests());
+        final User user = new User(null, "Hello", "Test", 5, new ArrayList<>());
+        TicketDTO ticketDTO = createTicketForTests();
+        user.getTicketDTOList().add(ticketDTO);
         userRepository.saveUser(user);
 
         assertEquals(user.getTicketDTOList().size(), 1);
-        mvc.perform(delete("/api/v1/tickets-user/1").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(delete("/api/v1/tickets-user/"+ticketDTO.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         assertEquals(user.getTicketDTOList().size(), 0);
     }
     @Test
     public void addTicketToUserById_thenStatus200() throws Exception {
-        final User user = new User(null, "Hello", "Test", 5, new ArrayList<TicketDTO>());
+        final User user = new User(null, "Hello", "Test", 5, new ArrayList<>());
         userRepository.saveUser(user);
-        createTicketForTests();
+        Long ticketId = createTicketForTests().getId();
 
         assertEquals(user.getTicketDTOList().size(), 0);
 
-        mvc.perform(put("/api/v1/tickets/1/1").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(put("/api/v1/tickets/"+ticketId+"/"+user.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         assertEquals(user.getTicketDTOList().size(), 1);

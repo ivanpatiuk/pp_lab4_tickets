@@ -99,9 +99,6 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDTO addTicketToUserById(final Long ticketId, final Long userId) {
-        if (ticketRepository.getTicketById(ticketId) == null || userRepository.getUserById(userId) == null ||
-                ticketId < 1 || userId < 1)
-            throw new ServiceException(400, "wrong arguments");
         final Ticket ticket = ticketRepository.getTicketById(ticketId);
         final User user = userRepository.getUserById(userId);
         user.getTicketDTOList().add(ticketMapper.toDTO(ticket));
@@ -153,14 +150,14 @@ public class TicketServiceImpl implements TicketService {
 
     public double cityDistance(final CityDTO city1, final CityDTO city2) {
 
-        // перевести координати в радіани
+        // transfer coordinates into radians
 
         double latitude1 = Math.PI * city1.getLatitude() / DEGREES;
         double latitude2 = Math.PI * city2.getLatitude() / DEGREES;
         double longitude1 = Math.PI * city1.getLongitude() / DEGREES;
         double longitude2 = Math.PI * city2.getLongitude() / DEGREES;
 
-        // косинуси і синуси широт и різниця довгот
+        // cosines and sines of the latitude difference of longitudes
         double cosLat1 = Math.cos(latitude1);
         double cosLat2 = Math.cos(latitude2);
         double sinLat1 = Math.cos(latitude1);
@@ -169,7 +166,7 @@ public class TicketServiceImpl implements TicketService {
         double cosDelta = Math.cos(delta);
         double sinDelta = Math.sin(delta);
 
-        // розрахунок довжини великого круга
+        // calculation of the length of a large circle
         double y = Math.sqrt(Math.pow(cosLat2 * sinDelta, 2) +
                 Math.pow(cosLat1 * sinLat2 - sinLat1 * cosLat2 * cosDelta, 2));
         double x = sinLat1 * sinLat2 + cosLat1 * cosLat2 * cosDelta;

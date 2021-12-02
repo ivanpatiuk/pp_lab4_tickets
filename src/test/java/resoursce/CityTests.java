@@ -1,4 +1,4 @@
-package resourse_tests;
+package resoursce;
 
 import lpnu.Application;
 import lpnu.dto.CityDTO;
@@ -50,9 +50,9 @@ public class CityTests {
     }
     @Test
     public void getCityById_thenStatus200() throws Exception {
-        final City newCity = new City(null, "Ukraine", "Lviv", 49.8397, 24.0297);
-        cityRepository.saveCity(newCity);
-        mvc.perform(get("/api/v1/cities/1").contentType(MediaType.APPLICATION_JSON))
+        final City сity = new City(null, "Ukraine", "Lviv", 49.8397, 24.0297);
+        cityRepository.saveCity(сity);
+        mvc.perform(get("/api/v1/cities/"+сity.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.country", is("Ukraine")));
@@ -66,11 +66,11 @@ public class CityTests {
     }
     @Test
     public void updateCity_thenStatus200() throws Exception {
-        final City newCity = new City(null, "Ukraine", "Lviv", 49.8397, 24.0297);
-        cityRepository.saveCity(newCity);
-        final City newCity2 = new City(1L, "Ukraine", "New-Lviv", 49.8397, 24.0297);
+        final City city = new City(null, "Ukraine", "Lviv", 49.8397, 24.0297);
+        cityRepository.saveCity(city);
+        final City city2 = new City(1L, "Ukraine", "New-Lviv", 49.8397, 24.0297);
         mvc.perform(put("/api/v1/cities").contentType(MediaType.APPLICATION_JSON)
-                        .content(JacksonUtil.serialize(newCity2)))
+                        .content(JacksonUtil.serialize(city2)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("New-Lviv")));
     }

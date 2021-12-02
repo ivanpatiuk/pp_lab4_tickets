@@ -21,11 +21,11 @@ public class UserRepository {
     }
 
     public List<User> getAllUsers() {
-        return new ArrayList<User>(users);
+        return new ArrayList<>(users);
     }
 
     public void deleteUserById(final Long id) {
-        for (User user : users) {
+        for (final User user : users) {
             if (user.getId().equals(id)) {
                 users.remove(user);
                 break;

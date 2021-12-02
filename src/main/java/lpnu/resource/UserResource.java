@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 public class UserResource {
     @Autowired
-    public UserService userService;
+    private UserService userService;
 
     @GetMapping("/users")
     public List<UserDTO> getAllUsers() {

@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class TicketResource {
     @Autowired
-    public TicketService ticketService;
+    private TicketService ticketService;
 
     @GetMapping("/tickets")
     public List<TicketDTO> getAllTickets() {
@@ -56,7 +56,6 @@ public class TicketResource {
 
     @PutMapping("/tickets/{ticketId}/{userId}")
     public TicketDTO addTicketToUserById(@PathVariable final Long ticketId, @PathVariable final Long userId) {
-        ticketService.addTicketToUserById(ticketId, userId);
-        return ticketService.getTicketById(ticketId);
+        return ticketService.addTicketToUserById(ticketId, userId);
     }
 }
