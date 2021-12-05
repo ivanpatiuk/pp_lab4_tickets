@@ -33,7 +33,7 @@ public class UserRepository {
         }
     }
 
-    public User updateCity(final User user) {
+    public User updateUser(final User user) {
         final User savedUser = getUserById(user.getId());
 
         savedUser.setName(user.getName());

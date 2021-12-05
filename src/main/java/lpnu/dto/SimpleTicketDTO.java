@@ -6,7 +6,6 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 public class SimpleTicketDTO {
-
     private String departureCountry;
     private String departureCity;
 

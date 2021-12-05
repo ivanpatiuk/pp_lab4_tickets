@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUser(final UserDTO userDTO) {
         userRepository.getUserById(userDTO.getId());
         return userMapper.toDTO(
-                userRepository.updateCity(
+                userRepository.updateUser(
                         userMapper.toEntity(
                                 userDTO)));
     }
