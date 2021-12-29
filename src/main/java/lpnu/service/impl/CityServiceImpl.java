@@ -1,10 +1,8 @@
 package lpnu.service.impl;
 
 import lpnu.dto.CityDTO;
-import lpnu.entity.City;
-import lpnu.exception.ServiceException;
 import lpnu.mapper.CityToCityDTOMapper;
-import lpnu.repository2.CityRepository;
+import lpnu.repository2.CityRepository1;
 import lpnu.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,7 @@ public class CityServiceImpl implements CityService {
     private CityToCityDTOMapper cityMapper;
 
     @Autowired
-    private CityRepository cityRepository;
+    private CityRepository1 cityRepository;
 
     @Override
     public List<CityDTO> getAllCities() {
