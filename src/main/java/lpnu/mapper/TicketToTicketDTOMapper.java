@@ -2,16 +2,19 @@ package lpnu.mapper;
 
 import lpnu.dto.TicketDTO;
 import lpnu.entity.Ticket;
+import lpnu.repository.CityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TicketToTicketDTOMapper {
+    @Autowired
+    private CityRepository cityRepository;
+
     public Ticket toEntity(final TicketDTO ticketDTO){
         final Ticket ticket = new Ticket(ticketDTO.getId(),
-                ticketDTO.getDepartureCountry(),
-                ticketDTO.getDepartureCity(),
-                ticketDTO.getArrivalCountry(),
-                ticketDTO.getArrivalCity(),
+                cityRepository.getCityById(ticketDTO.getDepartureCityId()),
+                cityRepository.getCityById(ticketDTO.getArrivalCityId()),
                 ticketDTO.getDistance(),
                 ticketDTO.getFlightTime(),
                 ticketDTO.getPrice(),
@@ -21,10 +24,8 @@ public class TicketToTicketDTOMapper {
     }
     public TicketDTO toDTO(final Ticket ticket){
         final TicketDTO ticketDTO = new TicketDTO(ticket.getId(),
-                ticket.getDepartureCountry(),
-                ticket.getDepartureCity(),
-                ticket.getArrivalCountry(),
-                ticket.getArrivalCity(),
+                ticket.getDepartureCity().getId(),
+                ticket.getArrivalCity().getId(),
                 ticket.getDistance(),
                 ticket.getFlightTime(),
                 ticket.getPrice(),

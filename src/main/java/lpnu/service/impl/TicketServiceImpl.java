@@ -1,6 +1,7 @@
 package lpnu.service.impl;
 
 import lpnu.dto.*;
+import lpnu.entity.City;
 import lpnu.entity.Ticket;
 import lpnu.entity.User;
 import lpnu.exception.ServiceException;
@@ -61,17 +62,15 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public TicketDTO saveTicket(final DepartureArrivalDTO departureArrivalDTO) {
         final Ticket ticket = new Ticket();
-        final CityDTO departureCity = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getDepartureCityId()));
-        final CityDTO arrivalCity = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getArrivalCityId()));
+        final City departureCity = cityRepository.getCityById(departureArrivalDTO.getDepartureCityId());
+        final City arrivalCity = cityRepository.getCityById(departureArrivalDTO.getArrivalCityId());
 
         final double cityDistance = cityDistance(departureCity, arrivalCity);
         if (cityDistance <= 200)
             throw new ServiceException(400, "distance between cities is less than 200");
 
-        ticket.setDepartureCountry(departureCity.getCountry());
-        ticket.setDepartureCity(departureCity.getName());
-        ticket.setArrivalCountry(arrivalCity.getCountry());
-        ticket.setArrivalCity(arrivalCity.getName());
+        ticket.setDepartureCity(departureCity);
+        ticket.setArrivalCity(arrivalCity);
         ticket.setDistance(cityDistance);
         ticket.setFlightTime(flightTime(departureCity, arrivalCity));
         ticket.setPrice(flightPrice(departureCity, arrivalCity));
@@ -122,20 +121,20 @@ public class TicketServiceImpl implements TicketService {
         if (departureArrivalDTO.getDepartureCityId() < 1 || departureArrivalDTO.getArrivalCityId() < 1
                 || departureArrivalDTO.getArrivalCityId().equals(departureArrivalDTO.getDepartureCityId()))
             throw new ServiceException(400, "wrong arguments");
-        final CityDTO cityDTO1 = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getDepartureCityId()));
-        final CityDTO cityDTO2 = cityMapper.toDTO(cityRepository.getCityById(departureArrivalDTO.getArrivalCityId()));
+        final City city1 = cityRepository.getCityById(departureArrivalDTO.getDepartureCityId());
+        final City city2 = cityRepository.getCityById(departureArrivalDTO.getArrivalCityId());
 
-        final double cityDistance = cityDistance(cityDTO1, cityDTO2);
-        final double flightTime = flightTime(cityDTO1, cityDTO2);
+        final double cityDistance = cityDistance(city1, city2);
+        final double flightTime = flightTime(city1, city2);
 
         final LocalDateTime departureLocalDateTime = departureArrivalDTO.getDepartureTime();
         final LocalDateTime arrivalLocalDateTime = departureLocalDateTime.plusMinutes((int) (flightTime) + 20);
 
         final SimpleTicketDTO simpleTicketDTO = new SimpleTicketDTO(
-                cityDTO1.getCountry(),
-                cityDTO1.getName(),
-                cityDTO2.getCountry(),
-                cityDTO2.getName(),
+                city1.getCountry(),
+                city1.getName(),
+                city2.getCountry(),
+                city2.getName(),
                 cityDistance,
                 flightTime,
                 Math.max(3000, pricePerKm * cityDistance),
@@ -144,11 +143,11 @@ public class TicketServiceImpl implements TicketService {
         return simpleTicketDTO;
     }
 
-    public double flightTime(final CityDTO cityDTO1, final CityDTO cityDTO2) {
-        return (cityDistance(cityDTO1, cityDTO2) / avgFlightSpeed) * 60;
+    public double flightTime(final City city1, final City city2) {
+        return (cityDistance(city1, city2) / avgFlightSpeed) * 60;
     }
 
-    public double cityDistance(final CityDTO city1, final CityDTO city2) {
+    public double cityDistance(final City city1, final City city2) {
 
         // transfer coordinates into radians
 
@@ -177,7 +176,7 @@ public class TicketServiceImpl implements TicketService {
         return dist;
     }
 
-    public double flightPrice(CityDTO cityDTO1, CityDTO cityDTO2) {
-        return Math.max(minFlightPrice, pricePerKm * cityDistance(cityDTO1, cityDTO2));
+    public double flightPrice(City city1, City city2) {
+        return Math.max(minFlightPrice, pricePerKm * cityDistance(city1, city2));
     }
 }

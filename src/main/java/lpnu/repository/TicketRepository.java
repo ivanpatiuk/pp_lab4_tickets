@@ -51,9 +51,7 @@ public class TicketRepository {
     public Ticket updateTicket(final Ticket ticket) {
         final Ticket savedTicket = getTicketById(ticket.getId());
 
-        savedTicket.setDepartureCountry(ticket.getDepartureCountry());
         savedTicket.setDepartureCity(ticket.getDepartureCity());
-        savedTicket.setArrivalCity(ticket.getArrivalCity());
         savedTicket.setArrivalCity(ticket.getArrivalCity());
         savedTicket.setDistance(ticket.getDistance());
         savedTicket.setFlightTime(ticket.getFlightTime());

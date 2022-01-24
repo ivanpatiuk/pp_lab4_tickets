@@ -1,33 +1,18 @@
 package lpnu.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lpnu.entity.Ticket;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TicketDTO {
     private Long id;
 
-    @NotBlank(message="Departure country name is mandatory")
-    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid departure country name")
-    private String departureCountry;
-
-    @NotBlank(message="Departure city name is mandatory")
-    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid departure city name")
-    private String departureCity;
-
-    @NotBlank(message="Arrival country name is mandatory")
-    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid arrival country name")
-    private String arrivalCountry;
-
-    @NotBlank(message="Arrival city name is mandatory")
-    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid arrival city name")
-    private String arrivalCity;
+    @NotNull
+    private Long departureCityId;
+    @NotNull
+    private Long arrivalCityId;
 
     @Min(200)
     private double distance;
@@ -43,14 +28,11 @@ public class TicketDTO {
     public TicketDTO() {
     }
 
-    public TicketDTO(final Long id, final String departureCountry, final String departureCity, final String arrivalCountry,
-                     final String arrivalCity, final double distance, final double flightTime, final double price,
-                     final LocalDateTime localDateTime) {
+    public TicketDTO(final Long id, final Long departureCityId, final Long arrivalCityId, final double distance,
+                     final double flightTime, final double price, final LocalDateTime localDateTime) {
         this.id = id;
-        this.departureCountry = departureCountry;
-        this.departureCity = departureCity;
-        this.arrivalCountry = arrivalCountry;
-        this.arrivalCity = arrivalCity;
+        this.departureCityId = departureCityId;
+        this.arrivalCityId = arrivalCityId;
         this.distance = distance;
         this.flightTime = flightTime;
         this.price = price;
@@ -58,14 +40,12 @@ public class TicketDTO {
         this.departureTime = localDateTime.plusMinutes((int)(flightTime)+20);
     }
 
-    public TicketDTO(final Long id, final String departureCountry, final String departureCity, final String arrivalCountry,
-                     final String arrivalCity, final double distance, final double flightTime, final double price,
-                     final LocalDateTime arrivalTime, final LocalDateTime departureTime) {
+    public TicketDTO(final Long id, final Long departureCityId, final Long arrivalCityId, final double distance,
+                     final double flightTime, final double price, final LocalDateTime arrivalTime,
+                     final LocalDateTime departureTime) {
         this.id = id;
-        this.departureCountry = departureCountry;
-        this.departureCity = departureCity;
-        this.arrivalCountry = arrivalCountry;
-        this.arrivalCity = arrivalCity;
+        this.departureCityId = departureCityId;
+        this.arrivalCityId = arrivalCityId;
         this.distance = distance;
         this.flightTime = flightTime;
         this.price = price;
@@ -81,36 +61,20 @@ public class TicketDTO {
         this.id = id;
     }
 
-    public String getDepartureCountry() {
-        return departureCountry;
+    public Long getDepartureCityId() {
+        return departureCityId;
     }
 
-    public void setDepartureCountry(final String departureCountry) {
-        this.departureCountry = departureCountry;
+    public void setDepartureCityId(Long departureCityId) {
+        this.departureCityId = departureCityId;
     }
 
-    public String getDepartureCity() {
-        return departureCity;
+    public Long getArrivalCityId() {
+        return arrivalCityId;
     }
 
-    public void setDepartureCity(final String departureCity) {
-        this.departureCity = departureCity;
-    }
-
-    public String getArrivalCountry() {
-        return arrivalCountry;
-    }
-
-    public void setArrivalCountry(final String arrivalCountry) {
-        this.arrivalCountry = arrivalCountry;
-    }
-
-    public String getArrivalCity() {
-        return arrivalCity;
-    }
-
-    public void setArrivalCity(final String arrivalCity) {
-        this.arrivalCity = arrivalCity;
+    public void setArrivalCityId(Long arrivalCityId) {
+        this.arrivalCityId = arrivalCityId;
     }
 
     public double getDistance() {
@@ -157,28 +121,18 @@ public class TicketDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TicketDTO ticket = (TicketDTO) o;
-        return Double.compare(ticket.distance, distance) == 0 &&
-                Double.compare(ticket.flightTime, flightTime) == 0 &&
-                Double.compare(ticket.price, price) == 0 &&
-                Objects.equals(departureCountry, ticket.departureCountry) &&
-                Objects.equals(departureCity, ticket.departureCity) &&
-                Objects.equals(arrivalCountry, ticket.arrivalCountry) &&
-                Objects.equals(arrivalCity, ticket.arrivalCity) &&
-                Objects.equals(departureTime, ticket.departureTime) &&
-                Objects.equals(arrivalTime, ticket.arrivalTime);
+        TicketDTO ticketDTO = (TicketDTO) o;
+        return Double.compare(ticketDTO.distance, distance) == 0
+                && Double.compare(ticketDTO.flightTime, flightTime) == 0
+                && Double.compare(ticketDTO.price, price) == 0
+                && departureCityId.equals(ticketDTO.departureCityId)
+                && arrivalCityId.equals(ticketDTO.arrivalCityId)
+                && departureTime.equals(ticketDTO.departureTime)
+                && arrivalTime.equals(ticketDTO.arrivalTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(departureCountry,
-                departureCity,
-                arrivalCountry,
-                arrivalCity,
-                distance,
-                flightTime,
-                price,
-                departureTime,
-                arrivalTime);
+        return Objects.hash(departureCityId, arrivalCityId, distance, flightTime, price, departureTime, arrivalTime);
     }
 }
