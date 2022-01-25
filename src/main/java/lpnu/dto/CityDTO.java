@@ -6,9 +6,6 @@ import javax.validation.constraints.*;
 import java.util.Objects;
 
 public class CityDTO {
-
-    private Long id;
-
     @NotBlank(message="Country name is mandatory")
     @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid country name")
     private String country;
@@ -29,20 +26,14 @@ public class CityDTO {
 
 
     public CityDTO() { }
-    public CityDTO(final Long id, final String country, final String name,
+    public CityDTO(final String country, final String name,
                    final Double latitude, final Double longitude) {
-        this.id = id;
         this.country = country;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    public Long getId() {
-        return id;
-    }
-    public void setId(final Long id) {
-        this.id = id;
-    }
+
 
     public String getCountry() {
         return country;
