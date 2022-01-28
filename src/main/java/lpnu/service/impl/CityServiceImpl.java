@@ -42,11 +42,9 @@ public class CityServiceImpl implements CityService {
         city.setCityName(cityDTO.getCityName());
         city.setLongitude(cityDTO.getLongitude());
         city.setLatitude(cityDTO.getLatitude());
-        if(cityRepository
-                .findAll()
-                .stream()
-                .anyMatch(city1 -> city1.getCityName().equals(city.getCityName())
-                        && city1.getCountry().equals(city.getCountry())))
+        if(cityRepository.findByCountryAndCityName(
+                cityDTO.getCountry(),
+                cityDTO.getCityName()) == null)
             throw new ServiceException(400, "The city us already saved");
         cityRepository.save(city);
         return cityMapper.toDTO(city);

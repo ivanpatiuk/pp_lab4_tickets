@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "city")
@@ -14,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class City {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     @EqualsAndHashCode.Exclude
     private Long id;
@@ -30,4 +32,7 @@ public class City {
 
     @Column(name = "longitude")
     private Double longitude; // довгота
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "departure_time_id")
+    private List<Ticket> ticketList;
 }
