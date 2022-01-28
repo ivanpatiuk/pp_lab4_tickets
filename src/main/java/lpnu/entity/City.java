@@ -2,10 +2,10 @@ package lpnu.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name = "city")
@@ -16,6 +16,7 @@ public class City {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "id")
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column(name = "country")
@@ -29,17 +30,4 @@ public class City {
 
     @Column(name = "longitude")
     private Double longitude; // довгота
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        City city = (City) o;
-        return Objects.equals(country, city.country) && Objects.equals(cityName, city.cityName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(country, cityName);
-    }
 }
