@@ -4,6 +4,7 @@ import lpnu.dto.*;
 import lpnu.entity.City;
 import lpnu.entity.Ticket;
 
+import lpnu.entity.User;
 import lpnu.entity.mapper.DTOConvertor;
 import lpnu.exception.ServiceException;
 
@@ -11,15 +12,13 @@ import lpnu.repository.CityRepository;
 
 import lpnu.repository.TicketRepository;
 
+import lpnu.repository.UserRepository;
 import lpnu.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -31,13 +30,14 @@ public class TicketServiceImpl implements TicketService {
 
     private final CityRepository cityRepository;
     private final TicketRepository ticketRepository;
-   // private final UserRepository userRepository;
+    private final UserRepository userRepository;
     private final DTOConvertor dtoConvertor;
 
     @Autowired
-    public TicketServiceImpl(CityRepository cityRepository, TicketRepository ticketRepository, DTOConvertor dtoConvertor) {
+    public TicketServiceImpl(CityRepository cityRepository, TicketRepository ticketRepository, UserRepository userRepository, DTOConvertor dtoConvertor) {
         this.cityRepository = cityRepository;
         this.ticketRepository = ticketRepository;
+        this.userRepository = userRepository;
         this.dtoConvertor = dtoConvertor;
     }
 
@@ -81,71 +81,54 @@ public class TicketServiceImpl implements TicketService {
                 .getDepartureTime()
                 .plusMinutes((int) (flightTime(departureCity, arrivalCity)) + 20));
 
-
-//        if (ticketRepository.findAll().stream().map(e -> e.equals(ticket)).findAny().isPresent())
-//            throw new ServiceException(400, "ticket is already saved");
-
         ticketRepository.save(ticket);
 
         return dtoConvertor.convertToDto(ticket, TicketDTO.class);
     }
-//
-//    @Override
-//    public TicketDTO updateTicket(final TicketDTO ticketDTO) {
-//        ticketRepository.getTicketById(ticketDTO.getTicketId());
-//        return ticketMapper.toDTO(
-//                ticketRepository.updateTicket(
-//                        ticketMapper.toEntity(
-//                                ticketDTO)));
-//    }
-//
-//    @Override
-//    public TicketDTO addTicketToUserById(final Long ticketId, final Long userId) {
-//        final Ticket ticket = ticketRepository.getTicketById(ticketId);
-//        final User user = userRepository.getUserById(userId);
-//        user.getTicketDTOList().add(ticketMapper.toDTO(ticket));
-//        return ticketMapper.toDTO(ticket);
-//    }
-//
-//    @Override
-//    public void deleteTicketById(final Long id) {
-//        removeTicketFromUserByTicketId(id);
-//        ticketRepository.deleteTicketById(id);
-//    }
-//
-//    @Override
-//    public void removeTicketFromUserByTicketId(final Long id) {
-//        ticketRepository.getTicketById(id);
-//        ticketRepository.removeTicketFromUserByTicketId(id);
-//    }
-//
-//    @Override
-//    public SimpleTicketDTO getTicketPrice(final DepartureArrivalDTO departureArrivalDTO) {
-//        if (departureArrivalDTO.getDepartureCityId() < 1 || departureArrivalDTO.getArrivalCityId() < 1
-//                || departureArrivalDTO.getArrivalCityId().equals(departureArrivalDTO.getDepartureCityId()))
-//            throw new ServiceException(400, "wrong arguments");
-//        final City city1 = cityRepository.getCityById(departureArrivalDTO.getDepartureCityId());
-//        final City city2 = cityRepository.getCityById(departureArrivalDTO.getArrivalCityId());
-//
-//        final double cityDistance = cityDistance(city1, city2);
-//        final double flightTime = flightTime(city1, city2);
-//
-//        final LocalDateTime departureLocalDateTime = departureArrivalDTO.getDepartureTime();
-//        final LocalDateTime arrivalLocalDateTime = departureLocalDateTime.plusMinutes((int) (flightTime) + 20);
-//
-//        final SimpleTicketDTO simpleTicketDTO = new SimpleTicketDTO(
-//                city1.getCountry(),
-//                city1.getName(),
-//                city2.getCountry(),
-//                city2.getName(),
-//                cityDistance,
-//                flightTime,
-//                Math.max(3000, pricePerKm * cityDistance),
-//                departureLocalDateTime,
-//                arrivalLocalDateTime);
-//        return simpleTicketDTO;
-//    }
-//
+
+
+    @Override
+    public TicketDTO updateTicket(final TicketDTO ticketDTO) {
+        Ticket ticketFromDB = ticketRepository.findById(ticketDTO.getTicketId()).get();
+        ticketFromDB.setPrice(ticketDTO.getPrice());
+        ticketFromDB.setArrivalCity(dtoConvertor.convertToEntity(ticketDTO.getArrivalCity(), new City()));
+        ticketFromDB.setDepartureCity(dtoConvertor.convertToEntity(ticketDTO.getDepartureCity(), new City()));
+        ticketFromDB.setFlightTime(ticketDTO.getFlightTime());
+        ticketFromDB.setArrivalTime(ticketDTO.getArrivalTime());
+        ticketFromDB.setDistance(ticketDTO.getDistance());
+        ticketFromDB.setDepartureTime(ticketDTO.getDepartureTime());
+
+        ticketRepository.save(ticketFromDB);
+        return dtoConvertor.convertToDto(ticketFromDB, TicketDTO.class);
+
+    }
+
+    @Override
+    public UserDTO addTicketToUserById(final Long ticketId, final Long userId) {
+        final Ticket ticket = ticketRepository.findById(ticketId).get();
+        final User user = userRepository.findById(userId).get();
+        user.getTicketList().add(ticket);
+        ticket.setUser(user);
+        ticketRepository.save(ticket);
+        userRepository.save(user);
+        return dtoConvertor.convertToDto(user, UserDTO.class);
+    }
+
+    @Override
+    public void deleteTicketById(final Long id) {
+        ticketRepository.deleteById(id);
+    }
+
+    @Override
+    public void changeTicketHost(final Long ticketId, final Long userId) {
+        final Ticket ticket = ticketRepository.findById(ticketId).get();
+        final User user = userRepository.findById(userId).get();
+        ticket.getUser().getTicketList().remove(ticket);
+        ticket.setUser(user);
+        user.getTicketList().add(ticket);
+        userRepository.save(user);
+    }
+
     public double flightTime(final City city1, final City city2) {
         return (cityDistance(city1, city2) / avgFlightSpeed) * 60;
     }

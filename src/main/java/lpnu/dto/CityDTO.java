@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -34,13 +33,5 @@ public class CityDTO {
     @Min(-90)
     @Max(90)
     private Double longitude; // довгота
-
-    public CityDTO(final String country, final String cityName,
-                   final Double latitude, final Double longitude) {
-        this.country = country;
-        this.cityName = cityName;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
 }
 

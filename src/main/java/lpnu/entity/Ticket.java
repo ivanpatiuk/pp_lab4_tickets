@@ -1,5 +1,6 @@
 package lpnu.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "ticket")
 public class Ticket implements Convertable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Exclude
     @Column(name = "ticket_id")
     private Long ticketId;
@@ -45,7 +46,8 @@ public class Ticket implements Convertable {
     @JoinColumn(name = "arrival_city_id")
     private City arrivalCity;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 }
