@@ -14,7 +14,7 @@ import java.util.Objects;
 @EqualsAndHashCode
 public class CityDTO {
     @EqualsAndHashCode.Exclude
-    private Long id;
+    private Long cityId;
 
     @NotBlank(message="Country name is mandatory")
     @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid country name")

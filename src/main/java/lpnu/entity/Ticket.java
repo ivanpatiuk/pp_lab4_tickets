@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lpnu.entity.mapper.Convertable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,13 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "ticket")
-public class Ticket {
+public class Ticket implements Convertable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @EqualsAndHashCode.Exclude
-    private Long id;
+    @Column(name = "ticket_id")
+    private Long ticketId;
 
-    @Column
+    @Column()
     private double distance;
 
     @Column(name = "flight_time")
@@ -35,10 +37,6 @@ public class Ticket {
     @Column(name = "arrival_time")
     private LocalDateTime arrivalTime;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @ManyToOne()
     @JoinColumn(name = "departure_city_id")
     private City departureCity;
@@ -46,4 +44,8 @@ public class Ticket {
     @ManyToOne()
     @JoinColumn(name = "arrival_city_id")
     private City arrivalCity;
+
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
 }

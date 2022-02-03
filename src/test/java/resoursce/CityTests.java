@@ -1,35 +1,35 @@
-//package resoursce;
-//
-//import lpnu.Application;
-//import lpnu.dto.CityDTO;
-//import lpnu.entity.City;
-//import lpnu.repository.OldCityRepository;
-//import lpnu.util.JacksonUtil;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.context.junit4.SpringRunner;
-//import org.springframework.test.web.servlet.MockMvc;
-//
-//import static org.hamcrest.CoreMatchers.is;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//
-//@RunWith(SpringRunner.class)
-//@SpringBootTest(
-//        classes = Application.class)
-//@AutoConfigureMockMvc
-//public class CityTests {
-//    @Autowired
-//    private MockMvc mvc;
-//
-//    @Autowired
-//    private OldCityRepository oldCityRepository;
-//
+package resoursce;
+
+import lpnu.Application;
+import lpnu.dto.CityDTO;
+import lpnu.entity.City;
+import lpnu.repository.CityRepository;
+import lpnu.util.JacksonUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(
+        classes = Application.class)
+@AutoConfigureMockMvc
+public class CityTests {
+    @Autowired
+    private MockMvc mvc;
+
+    @Autowired
+    private CityRepository cityRepository;
+
 //    @Test
 //    public void saveCity_thenStatus200() throws Exception {
 //        final CityDTO newCity = new CityDTO(null, "Ukraine", "Lviv", 49.8397, 24.0297);
@@ -50,9 +50,9 @@
 //    }
 //    @Test
 //    public void getCityById_thenStatus200() throws Exception {
-//        final City сity = new City(null, "Ukraine", "Lviv", 49.8397, 24.0297);
-//        oldCityRepository.saveCity(сity);
-//        mvc.perform(get("/api/v1/cities/"+сity.getId()).contentType(MediaType.APPLICATION_JSON))
+//        final City сity = new City(null, "Ukraine", "Lviv", 49.8397, 24.0297, null, null);
+//        cityRepository.save(сity);
+//        mvc.perform(get("/api/v1/cities/"+сity.getCityId()).contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk())
 //                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 //                .andExpect(jsonPath("$.country", is("Ukraine")));
@@ -86,4 +86,4 @@
 //
 //        assertEquals(oldCityRepository.getAllCities().size(),1);
 //    }
-//}
+}

@@ -1,10 +1,7 @@
 package lpnu.service;
 
 import lpnu.dto.CityDTO;
-import lpnu.entity.City;
-
 import java.util.List;
-import java.util.Optional;
 
 public interface CityService {
     CityDTO saveCity(final CityDTO city);

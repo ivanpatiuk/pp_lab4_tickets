@@ -1,26 +1,30 @@
 //package lpnu.service.impl;
 //
-//import lpnu.dto.TicketDTO;
 //import lpnu.dto.UserDTO;
 //import lpnu.entity.User;
-//import lpnu.exception.ServiceException;
+//import lpnu.entity.mapper.DTOConvertor;
 //import lpnu.mapper.UserToUserDTOMapper;
 //import lpnu.repository.UserRepository;
 //import lpnu.service.UserService;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //
-//import java.time.LocalDate;
 //import java.util.List;
 //import java.util.stream.Collectors;
 //
 //@Service
 //public class UserServiceImpl implements UserService {
-//    @Autowired
-//    private UserToUserDTOMapper userMapper;
+//
+//    private final UserToUserDTOMapper userMapper;
+//    private final UserRepository userRepository;
+//    private final DTOConvertor dtoConvertor;
 //
 //    @Autowired
-//    private UserRepository userRepository;
+//    public UserServiceImpl(UserToUserDTOMapper userMapper, UserRepository userRepository, DTOConvertor dtoConvertor) {
+//        this.userMapper = userMapper;
+//        this.userRepository = userRepository;
+//        this.dtoConvertor = dtoConvertor;
+//    }
 //
 //    @Override
 //    public List<UserDTO> getAllUsers() {
