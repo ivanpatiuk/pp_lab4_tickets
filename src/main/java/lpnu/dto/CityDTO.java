@@ -24,14 +24,14 @@ public class CityDTO {
 
     @EqualsAndHashCode.Exclude
     @NotNull(message = "Latitude is mandatory ")
-    @Min(-90)
-    @Max(90)
+    @Min(-180)
+    @Max(180)
     private Double latitude; // широта
 
     @EqualsAndHashCode.Exclude
     @NotNull(message = "Latitude is mandatory ")
-    @Min(-90)
-    @Max(90)
+    @Min(-180)
+    @Max(180)
     private Double longitude; // довгота
 }
 

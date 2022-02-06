@@ -50,7 +50,7 @@ public class CityServiceImpl implements CityService {
         city.setLatitude(cityDTO.getLatitude());
         if (cityRepository.findByCountryAndCityName(
                 cityDTO.getCountry(),
-                cityDTO.getCityName()) == null)
+                cityDTO.getCityName()) != null)
             throw new ServiceException(400, "The city us already saved");
         cityRepository.save(city);
         return dtoConvertor.convertToDto(city, CityDTO.class);

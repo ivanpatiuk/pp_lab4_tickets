@@ -76,8 +76,8 @@ public class TicketServiceImpl implements TicketService {
         ticket.setDistance(cityDistance);
         ticket.setFlightTime(flightTime(departureCity, arrivalCity));
         ticket.setPrice(flightPrice(departureCity, arrivalCity));
-        ticket.setArrivalTime(departureArrivalDTO.getDepartureTime());
-        ticket.setDepartureTime(departureArrivalDTO
+        ticket.setDepartureTime(departureArrivalDTO.getDepartureTime());
+        ticket.setArrivalTime(departureArrivalDTO
                 .getDepartureTime()
                 .plusMinutes((int) (flightTime(departureCity, arrivalCity)) + 20));
 
